@@ -1,0 +1,691 @@
+{
+    "pages": {
+        "configuration": {
+            "tabs": [
+                {
+                    "name": "account",
+                    "title": "Account",
+                    "table": {
+                        "actions": [
+                            "edit",
+                            "delete",
+                            "clone"
+                        ],
+                        "header": [
+                            {
+                                "label": "Name",
+                                "field": "name"
+                            },
+                            {
+                                "label": "Pi-hole URL",
+                                "field": "base_url"
+                            }
+                        ]
+                    },
+                    "entity": [
+                        {
+                            "type": "text",
+                            "label": "Name",
+                            "field": "name",
+                            "help": "A unique name for this Pi-hole connection.",
+                            "required": true,
+                            "validators": [
+                                {
+                                    "type": "regex",
+                                    "errorMsg": "Account Name must begin with a letter and consist exclusively of alphanumeric characters and underscores.",
+                                    "pattern": "^[a-zA-Z]\\w*$"
+                                },
+                                {
+                                    "type": "string",
+                                    "errorMsg": "Length of input name should be between 1 and 100",
+                                    "minLength": 1,
+                                    "maxLength": 100
+                                }
+                            ]
+                        },
+                        {
+                            "type": "text",
+                            "label": "Pi-hole base URL",
+                            "field": "base_url",
+                            "help": "Base URL of your Pi-hole, e.g. https://pi.hole or https://192.168.1.10. No trailing slash, no /api suffix.",
+                            "required": true,
+                            "validators": [
+                                {
+                                    "type": "url",
+                                    "errorMsg": "Must be a valid URL, e.g. https://pi.hole"
+                                }
+                            ]
+                        },
+                        {
+                            "type": "text",
+                            "label": "Password",
+                            "field": "password",
+                            "encrypted": true,
+                            "required": true,
+                            "help": "Your Pi-hole admin password, or (recommended) an application password generated under Settings > Web Interface / API in the Pi-hole UI. Used only to obtain a short-lived API session; not stored by Pi-hole in plaintext form on this end either.",
+                            "validators": [
+                                {
+                                    "type": "string",
+                                    "errorMsg": "Length of password should be between 1 and 255",
+                                    "minLength": 1,
+                                    "maxLength": 255
+                                }
+                            ]
+                        },
+                        {
+                            "type": "checkbox",
+                            "label": "Verify TLS certificate",
+                            "field": "verify_tls",
+                            "defaultValue": true,
+                            "help": "Uncheck only if your Pi-hole uses a self-signed certificate you can't add to the trust store. Leaving this checked is strongly recommended."
+                        }
+                    ]
+                },
+                {
+                    "name": "proxy",
+                    "title": "Proxy",
+                    "entity": [
+                        {
+                            "type": "checkbox",
+                            "label": "Enable",
+                            "field": "proxy_enabled"
+                        },
+                        {
+                            "type": "singleSelect",
+                            "label": "Proxy Type",
+                            "required": false,
+                            "options": {
+                                "disableSearch": true,
+                                "autoCompleteFields": [
+                                    {
+                                        "value": "http",
+                                        "label": "http"
+                                    },
+                                    {
+                                        "value": "socks4",
+                                        "label": "socks4"
+                                    },
+                                    {
+                                        "value": "socks5",
+                                        "label": "socks5"
+                                    }
+                                ]
+                            },
+                            "defaultValue": "http",
+                            "field": "proxy_type"
+                        },
+                        {
+                            "type": "text",
+                            "label": "Host",
+                            "validators": [
+                                {
+                                    "type": "string",
+                                    "errorMsg": "Max host length is 4096",
+                                    "minLength": 1,
+                                    "maxLength": 4096
+                                },
+                                {
+                                    "type": "regex",
+                                    "errorMsg": "Proxy Host should not have special characters",
+                                    "pattern": "^[a-zA-Z]\\w*$"
+                                }
+                            ],
+                            "field": "proxy_url",
+                            "required": true
+                        },
+                        {
+                            "type": "text",
+                            "label": "Port",
+                            "validators": [
+                                {
+                                    "type": "number",
+                                    "range": [
+                                        1,
+                                        65535
+                                    ],
+                                    "isInteger": true
+                                }
+                            ],
+                            "field": "proxy_port",
+                            "required": true
+                        },
+                        {
+                            "type": "text",
+                            "label": "Username",
+                            "validators": [
+                                {
+                                    "type": "string",
+                                    "errorMsg": "Max length of username is 50",
+                                    "minLength": 0,
+                                    "maxLength": 50
+                                }
+                            ],
+                            "field": "proxy_username"
+                        },
+                        {
+                            "type": "text",
+                            "label": "Password",
+                            "validators": [
+                                {
+                                    "type": "string",
+                                    "errorMsg": "Max length of password is 8192",
+                                    "minLength": 0,
+                                    "maxLength": 8192
+                                }
+                            ],
+                            "encrypted": true,
+                            "field": "proxy_password"
+                        },
+                        {
+                            "type": "checkbox",
+                            "label": "DNS resolution",
+                            "field": "proxy_rdns"
+                        }
+                    ]
+                },
+                {
+                    "name": "logging",
+                    "title": "Logging",
+                    "entity": [
+                        {
+                            "type": "singleSelect",
+                            "label": "Log level",
+                            "options": {
+                                "disableSearch": true,
+                                "autoCompleteFields": [
+                                    {
+                                        "value": "DEBUG",
+                                        "label": "DEBUG"
+                                    },
+                                    {
+                                        "value": "INFO",
+                                        "label": "INFO"
+                                    },
+                                    {
+                                        "value": "WARNING",
+                                        "label": "WARNING"
+                                    },
+                                    {
+                                        "value": "ERROR",
+                                        "label": "ERROR"
+                                    },
+                                    {
+                                        "value": "CRITICAL",
+                                        "label": "CRITICAL"
+                                    }
+                                ]
+                            },
+                            "defaultValue": "INFO",
+                            "field": "loglevel",
+                            "required": true,
+                            "validators": [
+                                {
+                                    "type": "regex",
+                                    "errorMsg": "Log level must be one of: DEBUG, INFO, WARNING, ERROR, CRITICAL",
+                                    "pattern": "^DEBUG|INFO|WARNING|ERROR|CRITICAL$"
+                                }
+                            ]
+                        }
+                    ]
+                }
+            ],
+            "title": "Configuration",
+            "description": "Set up your add-on"
+        },
+        "inputs": {
+            "title": "Inputs",
+            "description": "Manage your data inputs",
+            "services": [
+                {
+                    "name": "pihole_stats_summary",
+                    "title": "Pi-hole Stats Summary (metrics)",
+                    "inputHelperModule": "pihole_stats_summary_helper",
+                    "entity": [
+                        {
+                            "type": "text",
+                            "label": "Input Name",
+                            "field": "name",
+                            "help": "A unique name for the data input.",
+                            "required": true,
+                            "validators": [
+                                {
+                                    "type": "regex",
+                                    "errorMsg": "Input Name must begin with a letter and consist exclusively of alphanumeric characters and underscores.",
+                                    "pattern": "^[a-zA-Z]\\w*$"
+                                },
+                                {
+                                    "type": "string",
+                                    "errorMsg": "Length of input name should be between 1 and 100",
+                                    "minLength": 1,
+                                    "maxLength": 100
+                                }
+                            ]
+                        },
+                        {
+                            "type": "singleSelect",
+                            "label": "Account",
+                            "field": "account",
+                            "help": "The Pi-hole connection to use for this input.",
+                            "options": {
+                                "referenceName": "account"
+                            },
+                            "required": true,
+                            "validators": [
+                                {
+                                    "type": "string",
+                                    "errorMsg": "Length of account name should be between 1 and 100",
+                                    "minLength": 1,
+                                    "maxLength": 100
+                                }
+                            ]
+                        },
+                        {
+                            "type": "singleSelect",
+                            "field": "index",
+                            "label": "Index",
+                            "defaultValue": "default",
+                            "options": {
+                                "endpointUrl": "data/indexes?search=isInternal=0+disabled=0",
+                                "denyList": "^_.*$",
+                                "createSearchChoice": true
+                            },
+                            "validators": [
+                                {
+                                    "type": "index_name"
+                                }
+                            ],
+                            "help": "Must be a metrics index (datatype=metric). Data is written as log-to-metrics events and converted at index time.",
+                            "required": true
+                        },
+                        {
+                            "type": "text",
+                            "field": "interval",
+                            "label": "Interval",
+                            "validators": [
+                                {
+                                    "type": "regex",
+                                    "errorMsg": "Interval must be either a non-negative number, CRON interval or -1.",
+                                    "pattern": "^((?:-1|\\d+(?:\\.\\d+)?)|(([\\*\\d{1,2}\\,\\-\\/]+\\s){4}[\\*\\d{1,2}\\,\\-\\/]+))$"
+                                },
+                                {
+                                    "type": "number",
+                                    "range": [
+                                        30,
+                                        86400
+                                    ],
+                                    "errorMsg": "Interval must be between 30 and 86400"
+                                }
+                            ],
+                            "help": "How often to poll /api/stats/summary, in seconds. This is a single lightweight call per run.",
+                            "required": true,
+                            "defaultValue": "60"
+                        },
+                        {
+                            "type": "multipleSelect",
+                            "label": "Values",
+                            "field": "metrics_to_ingest",
+                            "options": {
+                                "delimiter": ",",
+                                "endpointUrl": "ta_pihole_field_options?dataset=summary",
+                                "dependencies": [
+                                    "account"
+                                ]
+                            },
+                            "help": "Which metrics to write to the metrics index each run. Unselected metrics are dropped before writing (the underlying API call still returns all of them; this just reduces metrics volume).",
+                            "required": false
+                        }
+                    ]
+                },
+                {
+                    "name": "pihole_queries",
+                    "title": "Pi-hole Query Log (events)",
+                    "inputHelperModule": "pihole_queries_helper",
+                    "entity": [
+                        {
+                            "type": "text",
+                            "label": "Input Name",
+                            "field": "name",
+                            "help": "A unique name for the data input.",
+                            "required": true,
+                            "validators": [
+                                {
+                                    "type": "regex",
+                                    "errorMsg": "Input Name must begin with a letter and consist exclusively of alphanumeric characters and underscores.",
+                                    "pattern": "^[a-zA-Z]\\w*$"
+                                },
+                                {
+                                    "type": "string",
+                                    "errorMsg": "Length of input name should be between 1 and 100",
+                                    "minLength": 1,
+                                    "maxLength": 100
+                                }
+                            ]
+                        },
+                        {
+                            "type": "singleSelect",
+                            "label": "Account",
+                            "field": "account",
+                            "help": "The Pi-hole connection to use for this input.",
+                            "options": {
+                                "referenceName": "account"
+                            },
+                            "required": true,
+                            "validators": [
+                                {
+                                    "type": "string",
+                                    "errorMsg": "Length of account name should be between 1 and 100",
+                                    "minLength": 1,
+                                    "maxLength": 100
+                                }
+                            ]
+                        },
+                        {
+                            "type": "singleSelect",
+                            "field": "index",
+                            "label": "Index",
+                            "defaultValue": "default",
+                            "options": {
+                                "endpointUrl": "data/indexes?search=isInternal=0+disabled=0",
+                                "denyList": "^_.*$",
+                                "createSearchChoice": true
+                            },
+                            "validators": [
+                                {
+                                    "type": "index_name"
+                                }
+                            ],
+                            "help": "Splunk events index for individual DNS query records.",
+                            "required": true
+                        },
+                        {
+                            "type": "text",
+                            "field": "interval",
+                            "label": "Interval",
+                            "validators": [
+                                {
+                                    "type": "regex",
+                                    "errorMsg": "Interval must be either a non-negative number, CRON interval or -1.",
+                                    "pattern": "^((?:-1|\\d+(?:\\.\\d+)?)|(([\\*\\d{1,2}\\,\\-\\/]+\\s){4}[\\*\\d{1,2}\\,\\-\\/]+))$"
+                                },
+                                {
+                                    "type": "number",
+                                    "range": [
+                                        60,
+                                        86400
+                                    ],
+                                    "errorMsg": "Interval must be between 60 and 86400"
+                                }
+                            ],
+                            "help": "How often to poll /api/queries for new DNS query log entries, in seconds. Query volume can be high on busy networks; avoid setting this too low.",
+                            "required": true,
+                            "defaultValue": "300"
+                        },
+                        {
+                            "type": "multipleSelect",
+                            "label": "Fields",
+                            "field": "fields_to_ingest",
+                            "options": {
+                                "delimiter": ",",
+                                "endpointUrl": "ta_pihole_field_options?dataset=queries",
+                                "dependencies": [
+                                    "account"
+                                ]
+                            },
+                            "help": "Which fields of each DNS query record to keep. The event timestamp is always taken from Pi-hole's own query time regardless of whether 'time' is selected here.",
+                            "required": false
+                        }
+                    ]
+                },
+                {
+                    "name": "pihole_top_lists",
+                    "title": "Pi-hole Top Domains/Clients (events)",
+                    "inputHelperModule": "pihole_top_lists_helper",
+                    "entity": [
+                        {
+                            "type": "text",
+                            "label": "Input Name",
+                            "field": "name",
+                            "help": "A unique name for the data input.",
+                            "required": true,
+                            "validators": [
+                                {
+                                    "type": "regex",
+                                    "errorMsg": "Input Name must begin with a letter and consist exclusively of alphanumeric characters and underscores.",
+                                    "pattern": "^[a-zA-Z]\\w*$"
+                                },
+                                {
+                                    "type": "string",
+                                    "errorMsg": "Length of input name should be between 1 and 100",
+                                    "minLength": 1,
+                                    "maxLength": 100
+                                }
+                            ]
+                        },
+                        {
+                            "type": "singleSelect",
+                            "label": "Account",
+                            "field": "account",
+                            "help": "The Pi-hole connection to use for this input.",
+                            "options": {
+                                "referenceName": "account"
+                            },
+                            "required": true,
+                            "validators": [
+                                {
+                                    "type": "string",
+                                    "errorMsg": "Length of account name should be between 1 and 100",
+                                    "minLength": 1,
+                                    "maxLength": 100
+                                }
+                            ]
+                        },
+                        {
+                            "type": "singleSelect",
+                            "field": "index",
+                            "label": "Index",
+                            "defaultValue": "default",
+                            "options": {
+                                "endpointUrl": "data/indexes?search=isInternal=0+disabled=0",
+                                "denyList": "^_.*$",
+                                "createSearchChoice": true
+                            },
+                            "validators": [
+                                {
+                                    "type": "index_name"
+                                }
+                            ],
+                            "help": "Splunk events index for top-domains/top-clients snapshot records.",
+                            "required": true
+                        },
+                        {
+                            "type": "text",
+                            "field": "interval",
+                            "label": "Interval",
+                            "validators": [
+                                {
+                                    "type": "regex",
+                                    "errorMsg": "Interval must be either a non-negative number, CRON interval or -1.",
+                                    "pattern": "^((?:-1|\\d+(?:\\.\\d+)?)|(([\\*\\d{1,2}\\,\\-\\/]+\\s){4}[\\*\\d{1,2}\\,\\-\\/]+))$"
+                                },
+                                {
+                                    "type": "number",
+                                    "range": [
+                                        60,
+                                        86400
+                                    ],
+                                    "errorMsg": "Interval must be between 60 and 86400"
+                                }
+                            ],
+                            "help": "How often to poll the top-domains/top-clients snapshot, in seconds.",
+                            "required": true,
+                            "defaultValue": "300"
+                        },
+                        {
+                            "type": "multipleSelect",
+                            "label": "Collections",
+                            "field": "lists_to_collect",
+                            "defaultValue": "top_domains,top_clients",
+                            "options": {
+                                "delimiter": ",",
+                                "items": [
+                                    {
+                                        "value": "top_domains",
+                                        "label": "Top domains"
+                                    },
+                                    {
+                                        "value": "top_clients",
+                                        "label": "Top clients"
+                                    }
+                                ]
+                            },
+                            "help": "Which top-N snapshots to collect each run.",
+                            "required": true
+                        },
+                        {
+                            "type": "text",
+                            "label": "Count",
+                            "field": "top_count",
+                            "defaultValue": "25",
+                            "help": "How many top entries to request per list (Pi-hole's 'count' query parameter).",
+                            "validators": [
+                                {
+                                    "type": "number",
+                                    "errorMsg": "Must be a number between 1 and 500",
+                                    "range": [
+                                        1,
+                                        500
+                                    ]
+                                }
+                            ]
+                        },
+                        {
+                            "type": "multipleSelect",
+                            "label": "Fields",
+                            "field": "fields_to_ingest",
+                            "options": {
+                                "delimiter": ",",
+                                "endpointUrl": "ta_pihole_field_options?dataset=top_lists",
+                                "dependencies": [
+                                    "account"
+                                ]
+                            },
+                            "help": "Which fields to keep on each top-domain/top-client record. Fields that don't apply to a given list (e.g. domain on a top-clients record) are simply absent.",
+                            "required": false
+                        }
+                    ]
+                }
+            ],
+            "table": {
+                "actions": [
+                    "edit",
+                    "delete",
+                    "clone"
+                ],
+                "header": [
+                    {
+                        "label": "Name",
+                        "field": "name"
+                    },
+                    {
+                        "label": "Interval",
+                        "field": "interval"
+                    },
+                    {
+                        "label": "Index",
+                        "field": "index"
+                    },
+                    {
+                        "label": "Status",
+                        "field": "disabled"
+                    }
+                ],
+                "moreInfo": [
+                    {
+                        "label": "Name",
+                        "field": "name"
+                    },
+                    {
+                        "label": "Interval",
+                        "field": "interval"
+                    },
+                    {
+                        "label": "Index",
+                        "field": "index"
+                    },
+                    {
+                        "label": "Status",
+                        "field": "disabled",
+                        "mapping": {
+                            "true": "Inactive",
+                            "false": "Active"
+                        }
+                    }
+                ]
+            }
+        },
+        "dashboard": {
+            "panels": [
+                {
+                    "name": "default"
+                }
+            ]
+        }
+    },
+    "meta": {
+        "name": "ta_pihole",
+        "restRoot": "ta_pihole",
+        "version": "1.1.0",
+        "displayName": "piHole Add-on for Splunk",
+        "schemaVersion": "0.0.10",
+        "supportedThemes": [
+            "light",
+            "dark"
+        ],
+        "supportedPythonVersion": [
+            "3.9",
+            "3.13"
+        ],
+        "_uccVersion": "6.6.0"
+    },
+    "options": {
+        "restHandlers": [
+            {
+                "name": "ta_pihole_field_options",
+                "endpoint": "ta_pihole_field_options",
+                "handlerType": "EAI",
+                "registerHandler": {
+                    "file": "ta_pihole_rh_field_options.py",
+                    "actions": [
+                        "list"
+                    ]
+                },
+                "requestParameters": {
+                    "list": {
+                        "account": {
+                            "schema": {
+                                "type": "string"
+                            },
+                            "required": false
+                        },
+                        "dataset": {
+                            "schema": {
+                                "type": "string"
+                            },
+                            "required": false
+                        }
+                    }
+                },
+                "responseParameters": {
+                    "list": {
+                        "label": {
+                            "schema": {
+                                "type": "string"
+                            },
+                            "required": false
+                        }
+                    }
+                }
+            }
+        ]
+    }
+}

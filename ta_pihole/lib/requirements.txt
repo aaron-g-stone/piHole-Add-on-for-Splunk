@@ -1,0 +1,10 @@
+splunktaucclib
+splunk-sdk
+# Pinned: solnlib>=8.0.0 pulls in grpcio + opentelemetry (compiled grpc extension +
+# packages requiring Python>=3.10), which fails the portability gate for Splunk's
+# bundled Python 3.9 and ships arch-specific binaries. 7.0.0 has no grpc/otel deps
+# and still exposes conf_manager / log / modular_input.checkpointer, which is all
+# this TA uses.
+solnlib==7.0.0
+requests==2.32.3
+chardet==5.2.0
